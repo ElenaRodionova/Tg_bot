@@ -1,23 +1,48 @@
 import telebot
 botTimeWeb = telebot.TeleBot('6637006109:AAGTrsKc4vipd6e8ZhGwBXRBoe54pjL7DnE')
 from telebot import types
+import tensorflow as tf
+import numpy as np
+import re
+from nltk.tokenize import word_tokenize
 
 @botTimeWeb.message_handler(commands=['start'])
 def startBot(message):
-  first_mess = f"<b>{message.from_user.first_name} {message.from_user.last_name}</b>, привет!\nХочешь расскажу немного о нашей компании?"
-  markup = types.InlineKeyboardMarkup()
-  button_yes = types.InlineKeyboardButton(text = 'Да', callback_data='yes')
-  markup.add(button_yes)
-  botTimeWeb.send_message(message.chat.id, first_mess, parse_mode='html', reply_markup=markup)
-
-@botTimeWeb.callback_query_handler(func=lambda call:True)
-def response(function_call):
-  if function_call.message:
-     if function_call.data == "yes":
-        second_mess = "Мы облачная платформа для разработчиков и бизнеса. Более детально можешь ознакомиться с нами на нашем сайте!"
-        markup = types.InlineKeyboardMarkup()
-        markup.add(types.InlineKeyboardButton("Перейти на сайт", url="https://timeweb.cloud/"))
-        botTimeWeb.send_message(function_call.message.chat.id, second_mess, reply_markup=markup)
-        botTimeWeb.answer_callback_query(function_call.id)
-
+  first_mess = f"<b>{message.from_user.first_name} {message.from_user.last_name}</b>, привет!"
+  botTimeWeb.send_message(message.chat.id, first_mess, parse_mode='html')
 botTimeWeb.infinity_polling()
+
+model = tf.keras.models.load_model('saved_lstm_model.h5')
+
+@botTimeWeb.message_handler(func=lambda message: True)
+def reply_message(message):
+    
+    text = message.text
+
+    input_data = preprocess(text)
+    
+    output_data = model.predict(input_data)
+ 
+    reply_text = postprocess(output_data)
+    
+    botTimeWeb.reply_to(message, reply_text)
+
+botTimeWeb.polling()
+
+
+def preprocess(text):
+  text = re.sub("[^a-zA-Z]"," ",text)
+  text = text.lower()
+  tokens = [word.strip() for word in word_tokenize(text)]
+  return tokens
+   
+def postprocess(output_data):
+  tokens = []
+  for prediction in output_data:
+      token = np.argmax(prediction)
+      tokens.append(token)
+
+  reply_text = " ".join(tokens)
+
+  return reply_text
+  
