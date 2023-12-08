@@ -14,7 +14,7 @@ botTimeWeb.infinity_polling()
 
 model = tf.keras.models.load_model('saved_lstm_model.h5')
 
-@botTimeWeb.message_handler(func=lambda message: True)
+@botTimeWeb.message_handler(func=lambda message: True, commands=['main'])
 def reply_message(message):
     
     text = message.text
