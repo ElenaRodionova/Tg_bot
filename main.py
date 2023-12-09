@@ -28,8 +28,7 @@ def handle_voice(message):
 
     # Отправляем ответное сообщение
     bot.send_message(message.chat.id, 'Голосовое сообщение получено')
-
-
+    
 @bot.message_handler(commands=['help'])
 def get_commands(message):
     commands_list = []
@@ -39,7 +38,7 @@ def get_commands(message):
     
     commands_text = "n".join(commands_list)
     bot.reply_to(message, f"Доступные команды:n{commands_text}")
-    
+
 @bot.message_handler(commands=['clear_history'])
 def clear_history(message):
     # Очистить историю запросов
