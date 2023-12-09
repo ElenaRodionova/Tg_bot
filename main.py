@@ -1,48 +1,32 @@
 import telebot
-botTimeWeb = telebot.TeleBot('6637006109:AAGTrsKc4vipd6e8ZhGwBXRBoe54pjL7DnE')
 from telebot import types
+import os
+import random
 import tensorflow as tf
 import numpy as np
-import re
-from nltk.tokenize import word_tokenize
 
-@botTimeWeb.message_handler(commands=['start'])
+
+TOKEN = '6637006109:AAGTrsKc4vipd6e8ZhGwBXRBoe54pjL7DnE'
+bot = telebot.TeleBot(TOKEN)
+
+@bot.message_handler(commands=['start'])
 def startBot(message):
-  first_mess = f"<b>{message.from_user.first_name} {message.from_user.last_name}</b>, привет!"
-  botTimeWeb.send_message(message.chat.id, first_mess, parse_mode='html')
-botTimeWeb.infinity_polling()
+  first_mess = f"<b>{message.from_user.first_name} {message.from_user.last_name}</b>, привет! Отправьте мне голосовое сообщение."
+  bot.send_message(message.chat.id, first_mess, parse_mode='html')
 
-model = tf.keras.models.load_model('saved_lstm_model.h5')
-
-@botTimeWeb.message_handler(func=lambda message: True, commands=['main'])
-def reply_message(message):
+@bot.message_handler(content_types=['voice'])
+def handle_voice(message):
+    # Получаем файл голосового сообщения
+    voice = message.voice.file_id
     
-    text = message.text
+    # Загружаем файл голосового сообщения
+    voice_info = bot.get_file(voice)
+    voice_path = voice_info.file_path
 
-    input_data = preprocess(text)
-    
-    output_data = model.predict(input_data)
- 
-    reply_text = postprocess(output_data)
-    
-    botTimeWeb.reply_to(message, reply_text)
+    # Обрабатываем голосовое сообщение
+    # Распознать с помощью специализированных библиотек
 
-botTimeWeb.polling()
+    # Отправляем ответное сообщение
+    bot.send_message(message.chat.id, 'Голосовое сообщение получено')
 
-
-def preprocess(text):
-  text = re.sub("[^a-zA-Z]"," ",text)
-  text = text.lower()
-  tokens = [word.strip() for word in word_tokenize(text)]
-  return tokens
-   
-def postprocess(output_data):
-  tokens = []
-  for prediction in output_data:
-      token = np.argmax(prediction)
-      tokens.append(token)
-
-  reply_text = " ".join(tokens)
-
-  return reply_text
-  
+bot.infinity_polling()
