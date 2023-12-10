@@ -1,5 +1,7 @@
 #pip install git+https://github.com/openai/whisper.git
 #Установка whisper
+#pip install https://github.com/explosion/spacy-models/releases/download/ru_core_news_sm-3.1.0/ru_core_news_sm-3.1.0.tar.gz
+#Установка русского языка для spacy
 
 import whisper
 import spacy
