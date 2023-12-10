@@ -87,7 +87,7 @@ def translate_to_eng(path):
     sample_rate = 48000
     speaker='en_0'
 
-    audio_paths = model.save_wav(text=example_text,
+    audio_paths = model.save_wav(text=result['text'],
                              speaker=speaker,
                              sample_rate=sample_rate)
     print(audio_paths)
