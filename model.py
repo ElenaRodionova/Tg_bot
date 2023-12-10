@@ -8,7 +8,8 @@ from spacy.lang.ru.stop_words import STOP_WORDS
 import ru_core_news_sm
 from string import punctuation
 from heapq import nlargest
-from gtts import gTTS
+import os
+import torch
 
 def create_transcription(path):
     """
@@ -71,9 +72,25 @@ def translate_to_eng(path):
     model = whisper.load_model("small")
 
     result = model.transcribe(path, task="translate")
-    tts = gTTS(text=result['text'], lang='en')
-    filename = "speech_in_eng.mp3"
-    tts.save(filename)
+
+    device = torch.device('cpu')
+    torch.set_num_threads(4)
+    local_file = 'model.pt'
+
+    if not os.path.isfile(local_file):
+        torch.hub.download_url_to_file('https://models.silero.ai/models/tts/en/v3_en.pt', local_file)  
+
+    model = torch.package.PackageImporter(local_file).load_pickle("tts_models", "model")
+    model.to(device)
+
+    example_text = 'oh no pizza delivery is closed, i guess ill order something from yandex lavka then. I wonder if they will search for available courier for an eternity like last time'
+    sample_rate = 48000
+    speaker='en_0'
+
+    audio_paths = model.save_wav(text=example_text,
+                             speaker=speaker,
+                             sample_rate=sample_rate)
+    print(audio_paths)
 
 if __name__ == '__main__':
     result = create_transcription('/workspaces/Tg_bot/ffmpeg/voice_file/file_43.oga')
