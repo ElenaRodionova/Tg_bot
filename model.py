@@ -8,6 +8,7 @@ from spacy.lang.ru.stop_words import STOP_WORDS
 import ru_core_news_sm
 from string import punctuation
 from heapq import nlargest
+from gtts import gTTS
 
 def create_transcription(path):
     """
@@ -60,6 +61,19 @@ def summarize(text, per):
     summary=''.join(final_summary)
 
     return summary
+
+def translate_to_eng(path):
+"""
+Перевод на английский и озвучивание
+Сохраняет аудио на компьютере
+"""
+    #small, base, medium
+    model = whisper.load_model("small")
+
+    result = model.transcribe(path, task="translate")
+    tts = gTTS(text=result['text'], lang='en')
+    filename = "speech_in_eng.mp3"
+    tts.save(filename)
 
 if __name__ == '__main__':
     result = create_transcription('/workspaces/Tg_bot/ffmpeg/voice_file/file_43.oga')
