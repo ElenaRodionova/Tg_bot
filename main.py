@@ -26,8 +26,18 @@ def handle_voice(message):
     voice_info = bot.get_file(voice)
     voice_path = voice_info.file_path
 
+    downloaded_file = bot.download_file(voice_path)
+    
+    # Путь для сохранения файла
+    destination_folder = "/workspaces/Tg_bot/ffmpeg/voice_file"
+    destination_path = f"{destination_folder}/{voice_path.split('/')[-1]}"
+
+    # Сохранение файла в указанную папку
+    with open(destination_path, 'wb') as voice_file:
+        voice_file.write(downloaded_file)
+
     # Обрабатываем голосовое сообщение
-    result = create_transcription(voice_path)
+    result = create_transcription(destination_path)
 
     # Распознать с помощью специализированных библиотек
     summary = summarize(summarize(result['text'], 0.5))

@@ -52,5 +52,5 @@ def summarize(text, per):
     return summary
 
 if __name__ == '__main__':
-    result = create_transcription('C:\\Users\\CoffeeDrinker\\Documents\\Sound recordings\\mary.m4a')
+    result = create_transcription('/workspaces/Tg_bot/ffmpeg/voice_file/file_43.oga')
     print(summarize(result['text'], 0.5))
