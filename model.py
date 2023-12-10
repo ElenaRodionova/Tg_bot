@@ -66,10 +66,10 @@ def summarize(text, per):
     return summary
 
 def translate_to_eng(path):
-"""
-Перевод на английский и озвучивание
-Сохраняет аудио на компьютере
-"""
+    """
+    Перевод на английский и озвучивание
+    Сохраняет аудио на компьютере
+    """
     #small, base, medium
     model = whisper.load_model("small")
 
