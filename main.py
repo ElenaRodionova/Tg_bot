@@ -6,6 +6,7 @@ import tensorflow as tf
 import numpy as np
 from model import create_transcription
 from model import summarize
+from model import translate_to_eng
 
 TOKEN = '6637006109:AAGTrsKc4vipd6e8ZhGwBXRBoe54pjL7DnE'
 bot = telebot.TeleBot(TOKEN)
@@ -44,5 +45,11 @@ def handle_voice(message):
 
     # Отправляем ответное сообщение
     bot.send_message(message.chat.id, summary, parse_mode='html')
+
+    # Перевод на английский и озвучивание. Сохранение аудио на компьютере
+    audio_paths = translate_to_eng(destination_path)
+
+    # Отправляем ответное сообщение с путем, где находится аудио
+    bot.send_message(message.chat.id, audio_paths, parse_mode='html')
 
 bot.infinity_polling()

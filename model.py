@@ -85,7 +85,7 @@ def translate_to_eng(path):
     model = torch.package.PackageImporter(local_file).load_pickle("tts_models", "model")
     model.to(device)
 
-    example_text = 'oh no pizza delivery is closed, i guess ill order something from yandex lavka then. I wonder if they will search for available courier for an eternity like last time'
+    #example_text = 'oh no pizza delivery is closed, i guess ill order something from yandex lavka then. I wonder if they will search for available courier for an eternity like last time'
     sample_rate = 48000
     speaker='en_0'
 
@@ -93,7 +93,8 @@ def translate_to_eng(path):
                              speaker=speaker,
                              sample_rate=sample_rate)
     print(audio_paths)
+    return f"Аудиофайл сохранен, <b>{audio_paths}</b>"
 
 if __name__ == '__main__':
-    result = create_transcription('/workspaces/Tg_bot/ffmpeg/voice_file/file_43.oga')
+    result = create_transcription('/workspaces/Tg_bot/ffmpeg/voice_file/file_48.oga')
     print(summarize(result['text'], 0.5))
