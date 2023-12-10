@@ -1,6 +1,7 @@
 #pip install git+https://github.com/openai/whisper.git
 #Установка whisper
 
+import whisper
 import spacy
 from spacy.lang.ru import Russian
 from spacy.lang.ru.stop_words import STOP_WORDS
