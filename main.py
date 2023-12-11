@@ -20,8 +20,6 @@ def startBot(message):
 def handle_voice(message):
     # Получаем файл голосового сообщения
     voice = message.voice.file_id
-    
-    bot.send_message(message.chat.id, 'Голосовое сообщение получено')
 
     # Загружаем файл голосового сообщения
     voice_info = bot.get_file(voice)
@@ -37,19 +35,35 @@ def handle_voice(message):
     with open(destination_path, 'wb') as voice_file:
         voice_file.write(downloaded_file)
 
-    # Обрабатываем голосовое сообщение
-    result = create_transcription(destination_path)
+      
+    bot.send_message(message.chat.id, 'Голосовое сообщение получено. Что вы хотите сделать?')
+    
+    keyboard = types.InlineKeyboardMarkup()
+    text_button = types.InlineKeyboardButton(text='Вывести текст', callback_data='display_text')
+    translate_button = types.InlineKeyboardButton(text='Перевести сообщение на английский язык', callback_data='translate_english')
+    keyboard.add(text_button, translate_button)
+    bot.send_message(message.chat.id, 'Выберите действие:', reply_markup=keyboard)
 
-    # Распознать с помощью специализированных библиотек
-    summary = summarize(result['text'], per = 0.5)
 
-    # Отправляем ответное сообщение
-    bot.send_message(message.chat.id, summary, parse_mode='html')
+    @bot.callback_query_handler(func=lambda call: True)
+    def handle_callback(call):
+        if call.data == 'display_text':
+          # Обрабатываем голосовое сообщение
+          result = create_transcription(destination_path)
 
-    # Перевод на английский и озвучивание. Сохранение аудио на компьютере
-    audio_paths = translate_to_eng(destination_path)
+          # Распознать с помощью специализированных библиотек
+          summary = summarize(result['text'], per = 0.5)
 
-    # Отправляем ответное сообщение с путем, где находится аудио
-    bot.send_message(message.chat.id, audio_paths, parse_mode='html')
+          # Отправляем ответное сообщение
+          bot.send_message(message.chat.id, summary, parse_mode='html')
+        elif call.data == 'translate_english':
+          # Перевод на английский и озвучивание. Сохранение аудио на компьютере
+          audio_paths = translate_to_eng(destination_path)
+          # Отправляем ответное сообщение с путем, где находится аудио
+          bot.send_message(message.chat.id, audio_paths, parse_mode='html')
+          audio_file = open('test.wav', 'rb')  # Открываем аудиофайл в режиме чтения байтов
+          bot.send_audio(message.chat.id, audio_file)
+          audio_file.close()  # Обязательно закрываем файл после отправки
+
 
 bot.infinity_polling()
