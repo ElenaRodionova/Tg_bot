@@ -41,7 +41,7 @@ def handle_voice(message):
     result = create_transcription(destination_path)
 
     # Распознать с помощью специализированных библиотек
-    summary = summarize(summarize(result['text'], 0.5))
+    summary = summarize(result['text'], per = 0.5)
 
     # Отправляем ответное сообщение
     bot.send_message(message.chat.id, summary, parse_mode='html')

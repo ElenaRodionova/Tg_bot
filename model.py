@@ -34,17 +34,18 @@ def summarize(text, per):
     
     #Вычисление абсолютной частоты слов
     for word in doc:
-        if word.text.lower() not in list(STOP_WORDS):
-            if word.text.lower() not in punctuation:
-                if word.text not in word_frequencies.keys():
-                    word_frequencies[word.text] = 1
-                else:
-                    word_frequencies[word.text] += 1
+        if word.text.lower() not in STOP_WORDS and word.text.lower() not in punctuation:
+            if word.text not in word_frequencies:
+                word_frequencies[word.text] = 1
+            else:
+                word_frequencies[word.text] += 1
 
+    if not doc:
+        return "No text provided."
+    
     #Вычисление относительнйо частоты слов
-    max_frequency=max(word_frequencies.values())
-    for word in word_frequencies.keys():
-        word_frequencies[word]=word_frequencies[word]/max_frequency
+    max_frequency = max(word_frequencies.values())
+    word_frequencies = {word: freq/max_frequency for word, freq in word_frequencies.items()}
 
     #Вычисление рейтингов предложений
     sentence_tokens= [sent for sent in doc.sents]
@@ -96,5 +97,5 @@ def translate_to_eng(path):
     return f"Аудиофайл сохранен, <b>{audio_paths}</b>"
 
 if __name__ == '__main__':
-    result = create_transcription('/workspaces/Tg_bot/ffmpeg/voice_file/file_48.oga')
-    print(summarize(result['text'], 0.5))
+    result = create_transcription('/workspaces/Tg_bot/ffmpeg/voice_file/file_51.oga')
+    print(summarize(result['text'], per = 0.5))
