@@ -41,7 +41,7 @@ def summarize(text, per):
                 word_frequencies[word.text] += 1
 
     if not doc:
-        return "No text provided."
+        return "Текст не распознан."
     
     #Вычисление относительнйо частоты слов
     max_frequency = max(word_frequencies.values())
