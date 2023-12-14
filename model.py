@@ -25,7 +25,7 @@ def create_transcription(path):
 
 def summarize(text, per):
     """
-    Summary текста. Необходимы исправления 
+    Summary текста.
     """
     nlp = spacy.load('ru_core_news_sm')
     doc= nlp(text)
